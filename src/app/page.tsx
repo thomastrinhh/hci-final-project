@@ -64,7 +64,7 @@ export default function Home() {
 
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start w-full max-w-xl">
         <h1 className="text-2xl font-bold text-center sm:text-left">
-          Hours Logger
+          ezLogger
         </h1>
 
         <div className="w-full flex flex-col gap-4">
