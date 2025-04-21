@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useRef } from "react";
-import DatePicker from "react-datepicker";  // Import DatePicker correctly
+import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { FaTrash } from "react-icons/fa"; // Import the trash icon from react-icons
+import { FaTrash } from "react-icons/fa";
+import ThemeToggle from './components/ThemeToggle';
 
 export default function Home() {
+  // State declarations
   const [task, setTask] = useState('');
   const [hours, setHours] = useState('');
   const [date, setDate] = useState<Date | null>(null);
@@ -15,6 +17,7 @@ export default function Home() {
 
   const datePickerRef = useRef<DatePicker | null>(null);
 
+  // Handlers
   const handleAddLog = () => {
     if (!task || !hours || !date || isNaN(Number(hours))) return;
     setLogs([
@@ -52,24 +55,27 @@ export default function Home() {
   };
 
   const handleDeleteLog = (index: number) => {
-    setLogs((prevLogs) => prevLogs.filter((_, i) => i !== index)); // Remove the log by index
+    setLogs((prevLogs) => prevLogs.filter((_, i) => i !== index));
   };
 
   return (
-    <div className="relative grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      {/* Fake Sign In Button */}
-      <button className="absolute top-6 right-6 bg-white border border-gray-300 px-4 py-2 rounded shadow hover:bg-gray-100 transition">
-        Sign In
-      </button>
+    <div className="relative grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)] bg-white dark:bg-gray-900 transition-colors duration-200">
+      {/* Theme Toggle and Sign In Button */}
+      <div className="absolute top-6 right-6 flex gap-4">
+        <ThemeToggle />
+        <button className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 px-4 py-2 rounded shadow hover:bg-gray-100 dark:hover:bg-gray-700 transition text-gray-800 dark:text-gray-200">
+          Sign In
+        </button>
+      </div>
 
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start w-full max-w-xl">
-        <h1 className="text-2xl font-bold text-center sm:text-left">
+        <h1 className="text-2xl font-bold text-center sm:text-left text-gray-900 dark:text-white">
           ezLogger
         </h1>
 
         <div className="w-full flex flex-col gap-4">
           <input
-            className="border rounded px-4 py-2 w-full"
+            className="border dark:border-gray-600 rounded px-4 py-2 w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
             type="text"
             placeholder="Task description"
             value={task}
@@ -78,29 +84,30 @@ export default function Home() {
 
           <div className="flex gap-4">
             <input
-              className="border rounded px-4 py-2 w-1/2"
+              className="border dark:border-gray-600 rounded px-4 py-2 w-1/2 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
               type="number"
               placeholder="Hours spent"
               value={hours}
               onChange={(e) => setHours(e.target.value)}
             />
-            <div className="w-1/2">
+            <div className="w-1/2 relative">
               <DatePicker
-                ref={datePickerRef}
                 selected={date}
                 onChange={(date) => setDate(date)}
-                className="border rounded px-4 py-2 w-full cursor-pointer bg-white"
+                className="border dark:border-gray-600 rounded px-4 py-2 w-full cursor-pointer bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
                 placeholderText="Select date"
                 dateFormat="yyyy-MM-dd"
                 maxDate={new Date()}
-                onFocus={(e) => e.target.blur()}
-                onCalendarOpen={() => datePickerRef.current?.setOpen(true)}  // Using onCalendarOpen instead of onClick
+                calendarClassName="!absolute !mt-2"
+                popperClassName="!absolute !z-50"
+                popperPlacement="bottom-start"
+                showPopperArrow={false}
               />
             </div>
           </div>
 
           <button
-            className="bg-black text-white px-4 py-2 rounded hover:bg-gray-800"
+            className="bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors"
             onClick={handleAddLog}
           >
             Add Log
@@ -112,7 +119,7 @@ export default function Home() {
             {logs.map((log, index) => (
               <li
                 key={index}
-                className="border px-4 py-3 rounded flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0"
+                className="border dark:border-gray-700 px-4 py-3 rounded flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 sm:gap-0 bg-white dark:bg-gray-800"
               >
                 {log.isEditing ? (
                   <div className="flex flex-col sm:flex-row gap-2 w-full sm:items-center">
@@ -122,7 +129,7 @@ export default function Home() {
                       onChange={(e) =>
                         handleEditChange(index, 'task', e.target.value)
                       }
-                      className="border px-2 py-1 rounded w-full sm:w-1/3"
+                      className="border dark:border-gray-600 px-2 py-1 rounded w-full sm:w-1/3 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
                     <input
                       type="number"
@@ -130,27 +137,28 @@ export default function Home() {
                       onChange={(e) =>
                         handleEditChange(index, 'hours', e.target.value)
                       }
-                      className="border px-2 py-1 rounded w-full sm:w-1/4"
+                      className="border dark:border-gray-600 px-2 py-1 rounded w-full sm:w-1/4 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                     />
-                    {/* Fixing DatePicker's Container */}
-                    <div className="w-full sm:w-1/3">
+                    <div className="w-full sm:w-1/3 relative">
                       <DatePicker
                         selected={log.date}
                         onChange={(date) => {
                           if (date) handleEditChange(index, 'date', date);
-                        }}                       
+                        }}
+                        className="border dark:border-gray-600 px-2 py-1 rounded w-full bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         dateFormat="yyyy-MM-dd"
                         maxDate={new Date()}
-                        className="border px-2 py-1 rounded w-full"
+                        calendarClassName="!absolute !mt-2"
+                        popperClassName="!absolute !z-50"
+                        popperPlacement="bottom-start"
                         showPopperArrow={false}
-                        readOnly
                       />
                     </div>
                   </div>
                 ) : (
                   <div>
-                    <p className="font-medium">{log.task}</p>
-                    <p className="text-sm text-gray-500">
+                    <p className="font-medium text-gray-900 dark:text-white">{log.task}</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
                       {log.date.toLocaleDateString()}
                     </p>
                   </div>
@@ -159,28 +167,28 @@ export default function Home() {
                 <div className="flex justify-end mt-2 sm:mt-0">
                   {log.isEditing ? (
                     <button
-                      className="text-green-600 font-medium hover:underline"
+                      className="text-green-600 dark:text-green-400 font-medium hover:underline"
                       onClick={() => handleEditToggle(index)}
                     >
                       Save
                     </button>
                   ) : (
                     <div className="flex items-center gap-4">
-                      <span className="text-sm text-gray-600">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
                         {log.hours} hrs
                       </span>
                       <div className="flex items-center gap-4">
                         <button
-                          className="text-blue-600 font-medium hover:underline"
+                          className="text-blue-600 dark:text-blue-400 font-medium hover:underline"
                           onClick={() => handleEditToggle(index)}
                         >
                           Edit
                         </button>
                         <button
-                          className="text-red-600 hover:text-red-800"
-                          onClick={() => handleDeleteLog(index)} // Trigger delete on click
+                          className="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300"
+                          onClick={() => handleDeleteLog(index)}
                         >
-                          <FaTrash /> {/* Trash icon */}
+                          <FaTrash />
                         </button>
                       </div>
                     </div>
